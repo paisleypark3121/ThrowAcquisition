@@ -7,18 +7,18 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace LancioIntegration.Controllers
+namespace ThrowAcquisition.Controllers
 {
     public class AcquisitionController : Controller
     {
         private ICall call;
         private ILog log;
-        private ITrace trace;
+        private IDiagnostic trace;
 
         public AcquisitionController(
             ICall _call,
             ILog _log,
-            ITrace _trace)
+            IDiagnostic _trace)
         {
             call = _call;
             log = _log;

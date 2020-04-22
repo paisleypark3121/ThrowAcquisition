@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LancioIntegration;
-using LancioIntegration.Controllers;
+using ThrowAcquisition;
+using ThrowAcquisition.Controllers;
 
-namespace LancioIntegration.Tests.Controllers
+namespace ThrowAcquisition.Tests.Controllers
 {
     [TestClass]
     public class HomeControllerTest

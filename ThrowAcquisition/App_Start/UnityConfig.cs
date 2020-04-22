@@ -5,7 +5,7 @@ using System.Web.Mvc;
 using Unity;
 using Unity.Mvc5;
 
-namespace LancioIntegration
+namespace ThrowAcquisition
 {
     public static class UnityConfig
     {
@@ -14,7 +14,7 @@ namespace LancioIntegration
 			var container = new UnityContainer();
             
             container.RegisterType<ICall, HttpCall>();
-            container.RegisterType<ITrace, ApplicationInsightsTrace>();
+            container.RegisterType<IDiagnostic, ApplicationInsightsTrace>();
             container.RegisterType<ILog, TableStorageLog>();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));

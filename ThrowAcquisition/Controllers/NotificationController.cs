@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace LancioIntegration.Controllers
+namespace ThrowAcquisition.Controllers
 {
     public class NotificationController : Controller
     {
