@@ -1,0 +1,38 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+    <form method="post" action="" onsubmit="" id="form">
+        <input type="hidden" name="phase" id="phase" value="@ViewBag.phase" />
+        <input type="hidden" name="msisdn" id="msisdn" value="@ViewBag.msisdn" />
+
+        <div id="page_wrapper" style="@ViewBag.page_wrapper">
+
+            <div id="container" style="@ViewBag.page_container">
+
+                <div id="header">
+                    <img src="@ViewBag.logo" alt="logo" id="logo">
+                </div>
+
+                <div id="welcome">
+                    <h1><span id="Lbl_Welcome">Benvenuto!</span></h1>
+                    <p><span id="Lbl_WelcomeText">@ViewBag.welcome</span></p>
+                </div>
+
+                @*<div id="login_box" style="background-image: url(@ViewBag.login_box)">*@
+                <div id="login_box" style="@ViewBag.login_box">
+
+                    <div id="firstFields" class="login_fields">
+                        <span id="Lbl_First">@ViewBag.label</span>
+                        <input name="Txt_First" type="text" id="Txt_First" class="textfield" value="">
+                        <span id="reqFirst" class="alert first" style="display:none;">@ViewBag.req</span>
+                    </div>
+                    <input type="image" name="Btn_Login" id="Btn_Login" class="btn-login" src="@ViewBag.Btn_Login" value="">
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+
