@@ -46,8 +46,15 @@ namespace ThrowAcquisition.Controllers
                 #region variables setup
                 request = ServiceLayer.Utilities.RequestString(Request);
                 var queryString = Request.QueryString;
-                string url = Request.Url.Host;
-                ServiceElement element = service.getByDomain(url);
+                string Host = Request.Url.Host;
+                string RawUrl = Request.RawUrl;
+                ViewBag.Host = Host;
+                ViewBag.RawUrl = RawUrl;
+                string _host = Host;
+                if (RawUrl != "/")
+                    _host = _host += RawUrl;
+
+                ServiceElement element = service.getByDomain(_host);
                 if (element == null)
                     return View();
                 #endregion
@@ -61,7 +68,7 @@ namespace ThrowAcquisition.Controllers
                 string tid = DateTime.Now.Ticks.ToString();
                 string id = element.ServiceID + "_test_" + tid;
 
-                redirectUrl = endUser.GetMobileRecognitonUrl(element.ServiceID.ToString(), @"http://" + url + BaseReturnUrl + @"/" + id);
+                redirectUrl = endUser.GetMobileRecognitonUrl(element.ServiceID.ToString(), @"http://" + Host + BaseReturnUrl + @"/" + id);
                 #endregion
 
                 #region precondition
@@ -187,7 +194,7 @@ namespace ThrowAcquisition.Controllers
                     || ((CarrID != Carrier.Wind.GetHashCode()) && (CarrID != Carrier.H3G.GetHashCode())))
                 {
                     // force behavior
-                    ServiceElement _serviceElement = service.get(ServiceID, Carrier.TIM.GetHashCode());
+                    ServiceElement _serviceElement = service.get(ServiceID, Carrier.H3G.GetHashCode());
                     return Redirect(_serviceElement.DigitalGOCatalogue);
                     //throw new Exception("Error: wrong RetCode - " + RetCode);
                 }
@@ -276,8 +283,8 @@ namespace ThrowAcquisition.Controllers
                 #region variables setup
                 request = ServiceLayer.Utilities.RequestString(Request);
                 var queryString = Request.QueryString;
-                string url = Request.Url.Host;
-                ServiceElement element = service.getByDomain(url);
+                string Host = Request.Url.Host;
+                ServiceElement element = service.getByDomain(Host);
                 #endregion
 
                 #region check AJAX call
@@ -285,7 +292,7 @@ namespace ThrowAcquisition.Controllers
                     throw new Exception("Ajax call");
                 #endregion
 
-                redirectUrl = endUser.GetMobileRecognitonUrl(element.ServiceID.ToString(), @"http://" + url + DisattivazioneBaseReturnUrl);
+                redirectUrl = endUser.GetMobileRecognitonUrl(element.ServiceID.ToString(), @"http://" + Host + DisattivazioneBaseReturnUrl);
 
                 #region precondition
                 if (string.IsNullOrEmpty(redirectUrl))
@@ -350,7 +357,7 @@ namespace ThrowAcquisition.Controllers
                 #region variables setup
                 request = ServiceLayer.Utilities.RequestString(Request);
                 var queryString = Request.QueryString;
-                string url = Request.Url.Host;
+                string Host = Request.Url.Host;
                 #endregion
 
                 #region preconditions
@@ -382,7 +389,7 @@ namespace ThrowAcquisition.Controllers
                 #region excape
                 if (RetCode == 1000)
                 {
-                    redirectUrl = endUser.manageOTP(TmpEndUserID, @"http://" + url + OTPBaseReturnUrl);
+                    redirectUrl = endUser.manageOTP(TmpEndUserID, @"http://" + Host + OTPBaseReturnUrl);
                     return Redirect(redirectUrl);
                 }
                 else if (RetCode == 1100)
@@ -450,7 +457,7 @@ namespace ThrowAcquisition.Controllers
                 #region variables setup
                 request = ServiceLayer.Utilities.RequestString(Request);
                 var queryString = Request.QueryString;
-                string url = Request.Url.Host;
+                string Host = Request.Url.Host;
                 #endregion
 
                 #region preconditions
@@ -483,7 +490,7 @@ namespace ThrowAcquisition.Controllers
                 if (RetCode == 1000)
                 {
                     #region acquisition request
-                    ServiceElement serviceElement = service.getByDomain(url);
+                    ServiceElement serviceElement = service.getByDomain(Host);
                     CheckSubsRequest = new Dictionary<string, object>
                     {
                         {"ServiceID", serviceElement.ServiceID },

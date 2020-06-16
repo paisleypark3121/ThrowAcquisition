@@ -52,6 +52,20 @@ namespace ThrowAcquisition
             );
 
             routes.MapRoute(
+                name: "tuttomobile",
+                url: "giochi",
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                //defaults: new { controller = "Login", action = "Index", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "tuttomobile_disattivazione",
+                url: "giochi/disattivazione",
+                defaults: new { controller = "Home", action = "Disattivazione", id = UrlParameter.Optional }
+                //defaults: new { controller = "Login", action = "Index", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
