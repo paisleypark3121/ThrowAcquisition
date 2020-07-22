@@ -52,12 +52,38 @@ namespace ThrowAcquisition.Controllers
                 ViewBag.RawUrl = RawUrl;
                 string _host = Host;
                 if (RawUrl != "/")
-                    _host = _host += RawUrl;
+                    _host += RawUrl;
+                #endregion
 
-                ServiceElement element = service.getByDomain(_host);
-                if (element == null)
+                #region ServiceElement
+                ServiceElement element = Utilities.GetServiceByDomain(service, Host, RawUrl);
+                if (Host.StartsWith("new"))
+                {
+                    if (queryString["CarrID"] != null)
+                    {
+                        ServiceElement element2 = service.get(element.ServiceID, int.Parse(queryString["CarrID"]));
+                        if (element2==null)
+                            return Redirect(_host.Replace("new", "new2"));
+
+                        if (!element2.moderated)
+                            return Redirect(_host.Replace("new", "new2"));
+
+                        if (queryString["endUserID"] != null)
+                            return Redirect(_host.Replace("new", "new2") + "?EndUserID=" + queryString["endUserID"] + "&CarrID=" + queryString["CarrID"]);
+                        else
+                            return Redirect(element.activationUrl.Replace("https://", ""));
+                    }
+                    else
+                        return Redirect(_host.Replace("new", "new2"));
+                }
+                else if (element == null)
                     return View();
                 #endregion
+
+                // ********************************************************************** FORCE *********************************************************************
+                if (element.ServiceID!=300)
+                    return Redirect(element.DigitalGOCatalogue);
+                // ********************************************************************** FORCE *********************************************************************
 
                 #region check AJAX call
                 if (Request.Headers["X-Requested-With"] != null && Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -193,9 +219,32 @@ namespace ThrowAcquisition.Controllers
                 if (((RetCode < 0) || (RetCode > 1100))
                     || ((CarrID != Carrier.Wind.GetHashCode()) && (CarrID != Carrier.H3G.GetHashCode())))
                 {
-                    // force behavior
-                    ServiceElement _serviceElement = service.get(ServiceID, Carrier.H3G.GetHashCode());
-                    return Redirect(_serviceElement.DigitalGOCatalogue);
+                    string Host = Request.Url.Host;
+                    string RawUrl = Request.RawUrl;
+                    RawUrl = RawUrl.Substring(0, RawUrl.IndexOf("BR"));
+                    string _host = Host;
+                    if (RawUrl != "/")
+                        _host = _host += RawUrl;
+
+                    ServiceElement element = service.getByDomain(_host);
+                    if (element == null)
+                    {
+                        // test FALLBACK
+                        if (Host.StartsWith("www"))
+                            _host = Host.Substring(4);
+                        else
+                            _host = "www." + Host;
+
+                        if (RawUrl != "/")
+                            _host = _host += RawUrl;
+                        element = service.getByDomain(_host);
+
+                        // force behavior
+                        element = service.getByDomain(_host);
+                        if (element == null)
+                            throw new NotImplementedException();
+                    }
+                    return Redirect(element.DigitalGOCatalogue);
                     //throw new Exception("Error: wrong RetCode - " + RetCode);
                 }
                 #endregion
@@ -208,7 +257,7 @@ namespace ThrowAcquisition.Controllers
                     {"ActivationURL",serviceElement.activationUrl},
                     {"FailURLPostfix","?id="+TransactionID},
                     {"ServiceID", ServiceID },
-                    {"SuccessURLPostfix","?id="+TransactionID},
+                    {"SuccessURLPostfix","?tid="+TransactionID+"&CarrID="+CarrID},
                     {"TemplateID",TemplateID},
                     {"TmpEndUserID",TmpEndUserID},
                     {"TransactionID",TransactionID },

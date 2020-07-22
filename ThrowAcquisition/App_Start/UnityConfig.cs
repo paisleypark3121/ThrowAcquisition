@@ -39,6 +39,7 @@ namespace ThrowAcquisition
             container.RegisterType<IResponseParser, DeactivationParser>("DeactivationParser");
             container.RegisterType<IResponseParser, CheckSubsParser>("CheckSubsParser");
             container.RegisterType<IResponseParser, OTPParser>("OTPParser");
+            container.RegisterType<IResponseParser, GetMSISDNParser>("GetMSISDNParser");
 
             container.RegisterType<ILogin, Login>(
                 new InjectionConstructor(
@@ -59,6 +60,7 @@ namespace ThrowAcquisition
                         container.Resolve<IResponseParser>("DeactivationParser"),
                         container.Resolve<IResponseParser>("CheckSubsParser"),
                         container.Resolve<IResponseParser>("OTPParser"),
+                        container.Resolve<IResponseParser>("GetMSISDNParser"),
                 }));
 
             //container.RegisterType<AcquisitionController>(
