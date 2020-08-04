@@ -17,9 +17,30 @@ namespace ThrowAcquisition
             //routes.IgnoreRoute("");
 
             routes.MapRoute(
+                name: "CheckAge",
+                url: "CheckAge/{id}",
+                defaults: new { controller = "Home", action = "CheckAge", id = UrlParameter.Optional }
+                //defaults: new { controller = "Login", action = "Index", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "Yes",
+                url: "yes/{id}",
+                defaults: new { controller = "Home", action = "yes", id = UrlParameter.Optional }
+                //defaults: new { controller = "Login", action = "Index", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
                 name: "BR",
                 url: "br/{id}",
                 defaults: new { controller = "Home", action = "BR", id = UrlParameter.Optional }
+                //defaults: new { controller = "Login", action = "Index", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "BR_error",
+                url: "br_error/{id}",
+                defaults: new { controller = "Home", action = "BR_error", id = UrlParameter.Optional }
                 //defaults: new { controller = "Login", action = "Index", id = UrlParameter.Optional }
             );
 

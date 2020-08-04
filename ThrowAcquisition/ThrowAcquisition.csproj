@@ -226,11 +226,19 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\CheckAge\style.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\glamspot\bg-box.png" />
     <Content Include="Content\glamspot\bg-wrapper.png" />
     <Content Include="Content\glamspot\btn-login-it.png" />
     <Content Include="Content\glamspot\glamspot.css" />
     <Content Include="Content\glamspot\logo-it.png" />
+    <Content Include="Content\img\CheckAge.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\img\NO_INTRO.jpeg" />
+    <Content Include="Content\img\SI_INTRO.jpeg" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -370,6 +378,9 @@
     <Content Include="Views\Acquisition\Index.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
+    <Content Include="Views\Shared\Information.cshtml" />
+    <Content Include="Views\Shared\_ConfirmLayout.cshtml" />
+    <Content Include="Views\Home\CheckAge.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

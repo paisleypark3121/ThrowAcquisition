@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "CheckAge";
+    ViewBag.css = "../Content/CheckAge/style.css";
+    Layout = "~/Views/Shared/_ConfirmLayout.cshtml";
+}
+
+@section scripts {
+
+    <script>
+        function yes() {
+            var id = window.location.pathname.split("/");
+            window.location.href = '/yes/' + id[2]+window.location.search; 
+        }
+    </script>
+
+}
+
+<img src="~/Content/img/CheckAge.jpg" class="img-fluid" alt="Responsive Image" />
+
+<div id="choice" class="row justify-content-center">
+    <table>
+        <tr>
+            <td>
+                <button type="button" class="btn btn-success" id="ch_button" onclick="yes()">SI</button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger" id="ch_button">NO</button>
+            </td>
+        </tr>
+    </table>
+</div>
