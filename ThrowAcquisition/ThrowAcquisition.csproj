@@ -234,6 +234,9 @@
     <Content Include="Content\glamspot\btn-login-it.png" />
     <Content Include="Content\glamspot\glamspot.css" />
     <Content Include="Content\glamspot\logo-it.png" />
+    <Content Include="Content\img\attention.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\img\CheckAge.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -381,6 +384,7 @@
     <Content Include="Views\Shared\Information.cshtml" />
     <Content Include="Views\Shared\_ConfirmLayout.cshtml" />
     <Content Include="Views\Home\CheckAge.cshtml" />
+    <Content Include="Views\Shared\wifi.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

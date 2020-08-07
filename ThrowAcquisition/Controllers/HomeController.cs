@@ -63,6 +63,22 @@ namespace ThrowAcquisition.Controllers
                 string fullBaseReturnUrl = @"http://" + Host + BaseReturnUrl + @"/";
                 #endregion
 
+                #region ALWAYS ON
+                if ((!string.IsNullOrEmpty(Request.UserAgent)) &&
+                    (Request.UserAgent.ToLower().Contains("alwayson")))
+                {
+                    redirectUrl = "Always On: " + Request.UserAgent;
+                    return View();
+                }
+                #endregion
+                #region GOOGLE BOT
+                if (Request.UserHostAddress.StartsWith("66."))
+                {
+                    redirectUrl = "Google BOT: "+ Request.UserHostAddress;
+                    return View();
+                }
+                #endregion
+
                 #region check AJAX call
                 if (Request.Headers["X-Requested-With"] != null && Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                     throw new Exception("Ajax call");
@@ -87,7 +103,7 @@ namespace ThrowAcquisition.Controllers
 
                 #region murp
                 string tid = DateTime.Now.Ticks.ToString();
-                string id = element.ServiceID + "_test_" + tid;
+                string id = element.ServiceID + "_index_" + tid;
                 return Redirect(redirectUrl = endUser.GetMobileRecognitonUrl(element.ServiceID.ToString(), fullBaseReturnUrl + id));
                 #endregion
             }
@@ -158,8 +174,7 @@ namespace ThrowAcquisition.Controllers
                 var queryString = Request.QueryString;
                 string Host = Request.Url.Host;
                 string RawUrl = Request.RawUrl;
-                ViewBag.Host = Host;
-                ViewBag.RawUrl = RawUrl;
+                RawUrl = RawUrl.Substring(0, RawUrl.IndexOf("/BR"));
                 string _host = Host;
                 if (RawUrl != "/")
                     _host += RawUrl;
@@ -205,67 +220,73 @@ namespace ThrowAcquisition.Controllers
                     throw new Exception("Ajax call");
                 #endregion
 
-                #region 4g navigation
-                if ((RetCode == 1000) || (RetCode == 1100))
+                #region ServiceElement
+                ServiceElement element = Utilities.GetServiceByDomain(service, Host, RawUrl);
+                #endregion
+
+                #region check CarrID for DigitalGo redirect
+                if (CarrID > 0)
                 {
-                    ServiceElement serviceElement = service.get(ServiceID, CarrID);
+                    element = service.getByDomain(element.domainName, CarrID);
+                    ServiceID = element.ServiceID;
 
-                    if (!serviceElement.migrated)
-                        return Redirect(serviceElement.DigitalGOCatalogue);
+                    if (!element.migrated)
+                        return Redirect(element.DigitalGOCatalogue);
 
-                    if (serviceElement.moderation)
-                        return Redirect(redirectUrl = "../CheckAge/"+id+"?" + queryString);
-
-                    #region acquisition request
-                    TemplateID = serviceElement.templateID;
-                    pageRequest = new Dictionary<string, object>
+                    #region valid user
+                    if ((RetCode == 1000) || (RetCode == 1100))
                     {
-                        {"ActivationURL",serviceElement.activationUrl},
-                        {"FailURLPostfix","?id="+TransactionID},
-                        {"ServiceID", ServiceID },
-                        {"SuccessURLPostfix","?tid="+TransactionID+"&CarrID="+CarrID},
-                        {"TemplateID",TemplateID},
-                        {"TmpEndUserID",TmpEndUserID},
-                        {"TransactionID",TransactionID },
-                        {"UserAgent",UserAgent},
-                        {"UserID",EndUserID },
-                        {"UserIP",UserIP},
-                    };
-                    response = endUser.ActivationRequest(pageRequest);
-                    #endregion
+                        if (element.moderation)
+                            return Redirect(redirectUrl = "../CheckAge/" + id + "?" + queryString);
 
-                    #region parse response
-                    if ((response == null) || (response.Count < 3))
-                        throw new Exception("Invalid response for request: " + JsonConvert.SerializeObject(pageRequest, Formatting.None));
-                    if (response["RetCode"].ToString() == "RequestExecutedSuccessfullyRedirectUser")
-                        return Redirect(redirectUrl = response["RedirectUrl"].ToString());
+                        #region acquisition request
+                        TemplateID = element.templateID;
+                        pageRequest = new Dictionary<string, object>
+                        {
+                            {"ActivationURL",element.activationUrl},
+                            {"FailURLPostfix","?id="+TransactionID},
+                            {"ServiceID", ServiceID },
+                            {"SuccessURLPostfix","?tid="+TransactionID+"&CarrID="+CarrID},
+                            {"TemplateID",TemplateID},
+                            {"TmpEndUserID",TmpEndUserID},
+                            {"TransactionID",TransactionID },
+                            {"UserAgent",UserAgent},
+                            {"UserID",EndUserID },
+                            {"UserIP",UserIP},
+                        };
+                        response = endUser.ActivationRequest(pageRequest);
+                        #endregion
+
+                        #region parse response
+                        if ((response == null) || (response.Count < 3))
+                            throw new Exception("Invalid response for request: " + JsonConvert.SerializeObject(pageRequest, Formatting.None));
+                        if (response["RetCode"].ToString() == "RequestExecutedSuccessfullyRedirectUser")
+                            return Redirect(redirectUrl = response["RedirectUrl"].ToString());
+                        else
+                        {
+                            string error = "Invalid response: " + JsonConvert.SerializeObject(response, Formatting.None);
+                            error += " for request: " + JsonConvert.SerializeObject(pageRequest, Formatting.None);
+                            throw new Exception(error);
+                        }
+                        #endregion
+                    }
+                    #endregion
+                    #region invalid user
                     else
                     {
-                        string error = "Invalid response: " + JsonConvert.SerializeObject(response, Formatting.None);
-                        error += " for request: " + JsonConvert.SerializeObject(pageRequest, Formatting.None);
-                        throw new Exception(error);
+                        //ViewBag.message = "Error " + RetCode;
+                        //return View("Error");
+                        return View("wifi");
                     }
                     #endregion
                 }
                 #endregion
-                #region ELSE
-                else //if (RetCode == 4070)
+                #region missing CarrID
+                else
                 {
-                    //ServiceElement serviceElement = service.get(ServiceID, 4);
-
-                    //if (!serviceElement.migrated)
-                    //    return Redirect(serviceElement.DigitalGOCatalogue);
-
-                    //string url = null;
-                    //if (Host.StartsWith("new"))
-                    //    url= serviceElement.catalogue;
-                    //else
-                    //    url=serviceElement.DigitalGOCatalogue;
-
-                    //return Redirect(url);
-
-                    ViewBag.message = "Error " + RetCode;
-                    return View("Error");
+                    //ViewBag.message = "Error " + RetCode;
+                    //return View("Error");
+                    return View("wifi");
                 }
                 #endregion
             }
@@ -970,7 +991,7 @@ namespace ThrowAcquisition.Controllers
 
         public ActionResult test()
         {
-            return Redirect("http://landings.mobileservice.mobi/hostedpage/load/232/?env=1");
+            return View("wifi");
         }
     }
 }

@@ -30,10 +30,10 @@ namespace ThrowAcquisition
             };
             container.RegisterType<IStore, TableStorageStore>("LoginStore", new InjectionConstructor(new object[] { store_login_args }));
 
-            container.RegisterType<IService, Service>();
+            container.RegisterType<IService, Service>(new ContainerControlledLifetimeManager());
             container.RegisterType<ICall, HttpCall>();
-            container.RegisterType<IDiagnostic, ApplicationInsightsTrace>();
-            container.RegisterType<ILog, TableStorageLog>();
+            container.RegisterType<IDiagnostic, ApplicationInsightsTrace>(new ContainerControlledLifetimeManager());
+            container.RegisterType<ILog, TableStorageLog>(new ContainerControlledLifetimeManager());
             container.RegisterType<IResponseParser, LoginParser>("LoginParser");
             container.RegisterType<IResponseParser, ActivationParser>("ActivationParser");
             container.RegisterType<IResponseParser, DeactivationParser>("DeactivationParser");
@@ -41,7 +41,7 @@ namespace ThrowAcquisition
             container.RegisterType<IResponseParser, OTPParser>("OTPParser");
             container.RegisterType<IResponseParser, GetMSISDNParser>("GetMSISDNParser");
 
-            container.RegisterType<ILogin, Login>(
+            container.RegisterType<ILogin, Login>(new ContainerControlledLifetimeManager(),
                 new InjectionConstructor(
                     new object[] {
                         container.Resolve<IAppSettings>(),
